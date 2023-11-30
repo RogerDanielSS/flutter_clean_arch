@@ -32,13 +32,16 @@ class HttpClientSpy extends Mock implements HttpClient {
 }
 
 void main() {
+  // arrange
+  HttpClientSpy httpClient = HttpClientSpy();
+  String url = faker.internet.httpUrl();
+  RemoteAuthentication sut = RemoteAuthentication(httpClient: httpClient, url: url); //system_under_test
+  
+  setUp(() {
+  });
+
   test('Should call HttpClient with correct values', () async {
     //design pattern: triple A (arrange, act, asert)
-
-    // arrange
-    final httpClient = HttpClientSpy();
-    final url = faker.internet.httpUrl();
-    final sut = RemoteAuthentication(httpClient: httpClient, url: url); //system_under_test
 
     // act
     sut.auth();
