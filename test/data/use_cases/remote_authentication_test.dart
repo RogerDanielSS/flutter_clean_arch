@@ -14,7 +14,7 @@ class RemoteAuthentication{
   RemoteAuthentication({required this.httpClient,  required this.url});
 
   Future<void> auth(AuthenticationParams params ) async {
-    httpClient.request(url: url, method: 'post');
+    httpClient.request(url: url, method: 'post', body: params.toJson());
   }
 }
 
@@ -50,6 +50,6 @@ void main() {
     sut.auth(params);
 
     // assert
-    verify(httpClient.request(url: url, method: 'post', body: {'email': params.email, 'password': params.password}));
+    verify(httpClient.request(url: url, method: 'post', body: params.toJson()));
   });
 }
