@@ -69,4 +69,15 @@ void main() {
     // assert
     expect(future, throwsA(DomainError.unexpected));
   });
+  
+  test('Should return InvalidCredentialsError if HttpClient returns error 401', () async {
+    when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
+    .thenThrow(HttpError.unauthorized);
+
+    // act
+    final future = sut.auth(params);
+
+    // assert
+    expect(future, throwsA(DomainError.invalidCredentials));
+  });
 }
