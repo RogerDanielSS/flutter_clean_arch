@@ -24,15 +24,12 @@ void main() {
   HttpClientSpy httpClient = HttpClientSpy();
   String url = faker.internet.httpUrl();
   RemoteAuthentication sut = RemoteAuthentication(httpClient: httpClient, url: url); //system_under_test
+  final params = AuthenticationParams(email: faker.internet.email(), password: faker.internet.password());
   
   setUp(() {
   });
 
   test('Should call HttpClient with correct values', () async {
-    //design pattern: triple A (arrange, act, asert)
-    //arrange
-    final params = AuthenticationParams(email: faker.internet.email(), password: faker.internet.password());
-
     // act
     sut.auth(params);
 
@@ -41,10 +38,6 @@ void main() {
   });
 
   test('Should return UnexpectedError if HttpClient returns error 400', () async {
-
-    //arrange
-    final params = AuthenticationParams(email: faker.internet.email(), password: faker.internet.password());
-
     when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
     .thenThrow(HttpError.badRequest);
 
