@@ -47,9 +47,21 @@ void main() {
     // assert
     expect(future, throwsA(DomainError.unexpected));
   });
+
   test('Should return UnexpectedError if HttpClient returns error 404', () async {
     when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
     .thenThrow(HttpError.notFound);
+
+    // act
+    final future = sut.auth(params);
+
+    // assert
+    expect(future, throwsA(DomainError.unexpected));
+  });
+  
+  test('Should return UnexpectedError if HttpClient returns error 500', () async {
+    when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
+    .thenThrow(HttpError.serverError);
 
     // act
     final future = sut.auth(params);
