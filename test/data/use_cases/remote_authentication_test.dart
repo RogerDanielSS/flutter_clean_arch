@@ -11,10 +11,10 @@ import 'package:flutter_clean_arch/data/http/http.dart';
 
 class HttpClientSpy extends Mock implements HttpClient {
   @override
-  Future<void> request({required String? url, required String? method, Map? body}) async {
+  Future<Map> request({required String? url, required String? method, Map? body}) async {
     return super.noSuchMethod(
       Invocation.method(#request, [url, method, body]),
-      returnValue: Future.value(),
+      returnValue: Future<Map>.value({}),
     );
   }
 }
@@ -30,6 +30,9 @@ void main() {
   });
 
   test('Should call HttpClient with correct values', () async {
+    when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
+    .thenAnswer((_) async => {'name': faker.person.name(), 'accessToken': faker.guid.guid()});
+
     // act
     sut.auth(params);
 
@@ -79,5 +82,18 @@ void main() {
 
     // assert
     expect(future, throwsA(DomainError.invalidCredentials));
+  });
+  
+  test('Should return AccountEntity if HttpClient returns 200', () async {
+    final accessToken =  faker.guid.guid();
+
+    when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
+    .thenAnswer((_) async => {'name': faker.person.name(), 'accessToken': accessToken});
+
+    // act
+    final account = await sut.auth(params);
+
+    // assert
+    expect(account.token, accessToken);
   });
 }
