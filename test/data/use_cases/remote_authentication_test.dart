@@ -96,4 +96,15 @@ void main() {
     // assert
     expect(account.token, accessToken);
   });
+  
+  test('Should throw UnexpectedError if HttpClient returns 200 with invalid data', () async {
+    when(httpClient.request(url: url, method: 'post', body:  RemoteAuthenticationParams.fromDomain(params).toJson()))
+    .thenAnswer((_) async => {'invalid_key': 'invalid_value'});
+
+    // act
+    final future = sut.auth(params);
+
+    // assert
+    expect(future, throwsA(DomainError.unexpected));
+  });
 }
