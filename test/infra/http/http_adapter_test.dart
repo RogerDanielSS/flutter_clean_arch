@@ -16,8 +16,7 @@ class ClientSpy extends Mock implements Client {
   void mockPost(int statusCode, {String body = '{"any_key":"any_value"}'}) =>
       mockPostCall().thenAnswer((_) async => Response(body, statusCode));
 
-  void mockPostError() =>
-      when(() => mockPostCall().thenThrow(Exception()));
+  void mockPostError() => when(() => mockPostCall().thenThrow(Exception()));
 }
 
 class HttpAdapter {
@@ -27,12 +26,14 @@ class HttpAdapter {
 
   Future<void> request(
       {required String url, required String method, Map? body}) async {
+    final jsonBody = body != null ? jsonEncode(body) : null;
+
     await client.post(Uri.parse(url),
         headers: {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
-        body: jsonEncode(body));
+        body: jsonBody);
   }
 }
 
@@ -53,16 +54,22 @@ void main() {
 
   group('post', () {
     const body = {'any_key': 'any_value'};
+    const headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json'
+    };
 
     test('Should call post with correct values', () async {
       await sut.request(url: url, method: 'post', body: body);
 
       verify(() => client.post(Uri.parse(url),
-          headers: {
-            'content-type': 'application/json',
-            'accept': 'application/json'
-          },
-          body: jsonEncode(body))).called(1);
+          headers: headers, body: jsonEncode(body))).called(1);
+    });
+
+    test('Should call post without body', () async {
+      await sut.request(url: url, method: 'post');
+
+      verify(() => client.post(Uri.parse(url), headers: headers)).called(1);
     });
   });
 }
