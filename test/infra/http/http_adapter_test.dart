@@ -32,7 +32,7 @@ class HttpAdapter {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
-        body: body);
+        body: jsonEncode(body));
   }
 }
 
@@ -62,7 +62,7 @@ void main() {
             'content-type': 'application/json',
             'accept': 'application/json'
           },
-          body: body)).called(1);
+          body: jsonEncode(body))).called(1);
     });
   });
 }
