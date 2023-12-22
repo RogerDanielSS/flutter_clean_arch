@@ -5,6 +5,8 @@ import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import 'package:flutter_clean_arch/data/http/http.dart';
+
 class ClientSpy extends Mock implements Client {
   ClientSpy() {
     mockPost(200);
@@ -19,21 +21,24 @@ class ClientSpy extends Mock implements Client {
   void mockPostError() => when(() => mockPostCall().thenThrow(Exception()));
 }
 
-class HttpAdapter {
+class HttpAdapter implements HttpClient {
   Client client;
 
   HttpAdapter(this.client);
 
-  Future<void> request(
+  @override
+  Future<Map> request(
       {required String url, required String method, Map? body}) async {
     final jsonBody = body != null ? jsonEncode(body) : null;
 
-    await client.post(Uri.parse(url),
+    final response = await client.post(Uri.parse(url),
         headers: {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
         body: jsonBody);
+
+    return jsonDecode(response.body);
   }
 }
 
@@ -70,6 +75,15 @@ void main() {
       await sut.request(url: url, method: 'post');
 
       verify(() => client.post(Uri.parse(url), headers: headers)).called(1);
+    });
+
+    test('Should return data if post returns 200', () async {
+      when(() => client.post(Uri.parse(url), headers: headers))
+          .thenAnswer((_) async => Response('{"any_key": "any_value"}', 200));
+
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, {'any_key': 'any_value'});
     });
   });
 }
