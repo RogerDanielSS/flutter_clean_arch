@@ -64,14 +64,6 @@ void main() {
       'accept': 'application/json'
     };
 
-    When mockRequest = when(() => client.post(Uri.parse(url), headers: headers));
-    
-    void mockResponse(int statusCode, {String body = '{"any_ke y": "any_value"}'}) {
-      mockRequest
-          .thenAnswer((_) async => Response(body, statusCode));
-    }
-
-
     test('Should call post with correct values', () async {
       await sut.request(url: url, method: 'post', body: body);
 
@@ -93,7 +85,15 @@ void main() {
     });
     
     test('Should return null if post returns 200 with no content', () async {
-      mockResponse(200, body: '');
+      client.mockPost(200, body: '');
+
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, null);
+    });
+    
+    test('Should return null if post returns 200 with no contenta', () async {
+      client.mockPost(200, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
@@ -101,7 +101,7 @@ void main() {
     });
     
     test('Should return null if post returns 204', () async {
-      mockResponse(204, body: '');
+      client.mockPost(204, body: '');
 
       final response = await sut.request(url: url, method: 'post');
 
