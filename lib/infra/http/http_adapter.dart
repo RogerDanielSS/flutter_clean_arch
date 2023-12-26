@@ -13,12 +13,20 @@ class HttpAdapter implements HttpClient {
       {required String url, required String method, Map? body}) async {
     final jsonBody = body != null ? jsonEncode(body) : null;
 
-    final response = await client.post(Uri.parse(url),
+    var response = Response('', 500);
+
+    switch(method){
+      case 'post':
+        response = await client.post(Uri.parse(url),
         headers: {
           'content-type': 'application/json',
           'accept': 'application/json'
         },
         body: jsonBody);
+      case 'get':
+      case 'delete':
+      case 'put':
+    }
 
     return _handleResponse(response);
   }

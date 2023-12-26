@@ -144,4 +144,14 @@ void main() {
       expect(future, throwsA(HttpError.notFound));
     });
   });
+
+  group('other', () {
+    test('Should return InternalServerError if http verb is unknown', () async {
+      client.mockPost(200);
+
+      final future = sut.request(url: url, method: 'anyWrong');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
 }
