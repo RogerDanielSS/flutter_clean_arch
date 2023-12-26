@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:faker/faker.dart';
-import 'package:flutter_clean_arch/infra/http/http.dart';
 import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'package:flutter_clean_arch/data/http/http.dart';
+
+import 'package:flutter_clean_arch/infra/http/http.dart';
 
 class ClientSpy extends Mock implements Client {
   ClientSpy() {
@@ -91,6 +94,14 @@ void main() {
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, null);
+    });
+
+    test('Should return BadRequestError if post returns 400', () async {
+      client.mockPost(400);
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
     });
   });
 }

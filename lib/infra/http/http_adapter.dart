@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import '../../data/http/http.dart';
 
@@ -21,10 +20,19 @@ class HttpAdapter implements HttpClient {
         },
         body: jsonBody);
 
-    if (response.statusCode == 200) {
-      return response.body.isEmpty ? null : jsonDecode(response.body);
-    } else if (response.statusCode == 200) {
-      return null;
+    return _handleResponse(response);
+  }
+
+  dynamic _handleResponse(Response response) {
+    switch (response.statusCode) {
+      case 200:
+        return response.body.isEmpty ? null : jsonDecode(response.body);
+      case 304:
+        return null;
+      case 400:
+        throw HttpError.badRequest;
+      default:
+        throw HttpError.unkownStatusCode;
     }
   }
 }
