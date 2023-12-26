@@ -27,7 +27,7 @@ class HttpAdapter implements HttpClient {
     switch (response.statusCode) {
       case 200:
         return response.body.isEmpty ? null : jsonDecode(response.body);
-      case 304:
+      case 204:
         return null;
       case 400:
         throw HttpError.badRequest;
