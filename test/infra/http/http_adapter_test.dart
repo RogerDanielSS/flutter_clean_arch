@@ -143,6 +143,14 @@ void main() {
 
       expect(future, throwsA(HttpError.notFound));
     });
+
+    test('Should return NotFoundError if post throws any exception', () async {
+      client.mockPostError();
+
+      final future = sut.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+    });
   });
 
   group('other', () {

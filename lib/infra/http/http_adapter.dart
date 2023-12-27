@@ -15,7 +15,8 @@ class HttpAdapter implements HttpClient {
 
     var response = Response('', 500);
 
-    switch(method){
+    try {
+      switch(method){
       case 'post':
         response = await client.post(Uri.parse(url),
         headers: {
@@ -26,6 +27,9 @@ class HttpAdapter implements HttpClient {
       case 'get':
       case 'delete':
       case 'put':
+      }
+    } catch (error) {
+      throw HttpError.serverError;
     }
 
     return _handleResponse(response);
