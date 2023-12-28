@@ -28,3 +28,6 @@ O BDD (Behavior Driven Development ou Desenvolvimento Orientado ao Comportamento
 ## Infra
 1. Onde ficam chamadas de funções/bibliotecas de terceiros ou APIs
 2. Sua importância é assegurar uma interface à camada de dados, mesmo que as funções ou bibliotecas chamadas se alterem
+
+## Main layer
+fica aclopado a todas as camadas (tem conhecimento de todas) para que seja possível desacoplar as demais
